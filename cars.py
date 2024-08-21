@@ -2,39 +2,39 @@ from flask import Flask, jsonify
 from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
 
+
 app = Flask(__name__)
 
-@app.route("/Lookup/<Plate>")
+@app.route("/<Plate>")
+
 def Scrape(Plate):
+
     url = 'https://vidange.tn/'
+
     if 'RS' in Plate:
         Type = 'RS'
         RSN = Plate[2:]
-        print(f"RSN: {RSN}")
     else:
         Type = 'TUN'
         S = Plate[:Plate.find('TUN')]
         N = Plate[Plate.find('TUN') + 3:]
 
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        context = browser.new_context(
-            user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        )
+        browser = p.chromium.launch(headless=False)
         page = browser.new_page()
         page.goto(url)
-        print("CHECKPOINT 1")
+
         if Type == 'RS':
             page.click("#RS")
             page.fill("#numRS", RSN)
         else:
             page.fill('#numSerie', S)
             page.fill('#numCar', N)
-        print("CHECKPOINT 2")
+
         page.click('button[name=btn-search-mat]')
-        print("CHECKPOINT 3")
-        page.wait_for_selector("div#detail-car", timeout=60000)
-        print("CHECKPOINT 4")
+
+        page.wait_for_selector("div#detail-car")
+
         details = page.inner_html('#detail-car')
         soup = BeautifulSoup(details, 'html.parser')
         values = soup.find_all('div', {"class": "value"})

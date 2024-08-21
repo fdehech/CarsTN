@@ -1,15 +1,17 @@
 from flask import Flask, jsonify
 from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
-
+from dotenv import load_dotenv
+import os
 
 app = Flask(__name__)
 
 @app.route("/<Plate>")
 
 def Scrape(Plate):
-
-    url = 'https://vidange.tn/'
+    load_dotenv()
+    url = os.getenv('url')
+    print(f"API URL: {url}")
 
     if 'RS' in Plate:
         Type = 'RS'

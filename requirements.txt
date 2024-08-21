@@ -1,0 +1,3 @@
+bs4
+BeautifulSoap4
+playwright
